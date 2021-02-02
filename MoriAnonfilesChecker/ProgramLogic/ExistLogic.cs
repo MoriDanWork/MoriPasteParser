@@ -1,42 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MoriAnonfilesChecker
 {
     public static class ExistLogic
     {
-        static string Path = "base.mori";
-        static List<string> ListOfBase = new List<string>();
-        public static List<string> Check(List<string> uids)
+        static string path = "base.mori";
+        public static bool Check(string uid)
         {
+            Chill:
             try
             {
+                var ListOfBase = new List<string>();
+                using StreamReader streamReader = new StreamReader(path);
+                while (!streamReader.EndOfStream) ListOfBase.Add(streamReader.ReadLine());
+                streamReader.Close();
 
-                List<string> uidsCleaned = new List<string>();
-                foreach (string uid in uids)
+                if (ListOfBase.Contains(uid))
                 {
-                    if (!ListOfBase.Contains(uid))
-                    {
-                        //TextWriter.Synchronized(WriteStream).WriteLine(uid);
-                        uidsCleaned.Add(uid);
-                    }
+                    return false;
                 }
-                return uidsCleaned;
             }
-            catch (System.IO.FileNotFoundException)
+            catch(FileNotFoundException) {  }
+            catch (IOException) { goto Chill; }
+            Flex:
+            try
             {
-                //File.WriteAllLines(Path, uids);
-                return uids;
+                using StreamWriter streamWriter = new StreamWriter(path, true);
+                streamWriter.WriteLine(uid);
+                streamWriter.Close();
+                return true;
+            }
+            catch (Exception)
+            {
+                goto Flex;
             }
         }
 
-        public static void GetBase()
-        {
-            ListOfBase = File.ReadAllLines(Path).ToList();
-        }
-        
     }
 }

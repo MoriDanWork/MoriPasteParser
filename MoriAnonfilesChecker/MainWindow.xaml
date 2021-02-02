@@ -5,18 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoriAnonfilesChecker"
         mc:Ignorable="d"
-        Height="398" Width="463" Style="{StaticResource MoriWindow}" Title="MoriAnonfilesChecker v1.0 | Coded by MoriDan">
+        Height="446" Width="497" Style="{StaticResource MoriWindow}" Title="MoriAnonfilesChecker v1.0 | Coded by MoriDan">
     <Border BorderBrush="#40709F" Background="#00000000" CornerRadius="2" BorderThickness="1">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="107*"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="314*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="31"/>
                 <RowDefinition Height="96"/>
-                <RowDefinition Height="130"/>
-                <RowDefinition Height="80*"/>
+                <RowDefinition Height="163"/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <Border x:Name="TitleBorder" BorderThickness="0,0,0,1" Height="30" VerticalAlignment="Center" MouseDown="TitleGrid_MouseDown" Grid.ColumnSpan="2">
                 <Border.BorderBrush>
@@ -40,27 +40,28 @@
                 </Grid>
             </Border>
 
-            <Grid x:Name="ControlGrid" HorizontalAlignment="Center" Height="76" VerticalAlignment="Center" Width="130" Grid.Row="1">
-                <Button x:Name="LoadButton" Content="Load Proxy" HorizontalAlignment="Center" Width="130" Height="22" VerticalAlignment="Top" Click="LoadButton_Click" Margin="0,54,0,0"/>
+            <Grid x:Name="ControlGrid" HorizontalAlignment="Left" Height="76" VerticalAlignment="Center" Width="130" Grid.Row="1" Margin="8,0,0,0">
+                <Button x:Name="LoadProxyButton" Content="Load Proxy" HorizontalAlignment="Center" Width="130" Height="22" VerticalAlignment="Top" Click="LoadProxyButton_Click" Margin="0,54,0,0"/>
                 <Button x:Name="StartButton" Content="Start" HorizontalAlignment="Center" Width="130" Height="22" VerticalAlignment="Top" Click="StartButton_Click"/>
                 <Button x:Name="StopButton" Content="Stop" HorizontalAlignment="Center" Width="130" IsEnabled="False" Height="22" VerticalAlignment="Center" Click="StopButton_Click"/>
             </Grid>
-            <Grid x:Name="PropertiesGrid" Height="110" VerticalAlignment="Center" Width="130" HorizontalAlignment="Center" Grid.Row="2">
-                <TextBox x:Name="SearchWord" HorizontalAlignment="Center" VerticalAlignment="Top" Width="130" Height="22"/>
-                <StackPanel Orientation="Horizontal" Height="24" Margin="0,85,0,0" VerticalAlignment="Top">
-                    <Label Content="Pages:" Height="26"/>
-                    <TextBox x:Name="PagesAmount" Margin="39.5,0,0,0" Text="5" Width="47" HorizontalContentAlignment="Right" TextChanged="ThreadsAmount_TextChanged" LostFocus="ThreadsAmount_LostFocus"/>
+            <Grid x:Name="PropertiesGrid" Height="143" VerticalAlignment="Center" Width="130" HorizontalAlignment="Left" Grid.Row="2" Margin="8,0,0,0">
+                <TextBox x:Name="SearchWord" Text="Good" HorizontalAlignment="Center" VerticalAlignment="Top" Width="130" Height="22"/>
+                <StackPanel Orientation="Horizontal" Height="24" Margin="0,60,0,0" VerticalAlignment="Top">
+                    <Label Content="Deep:" Height="26"/>
+                    <TextBox x:Name="PagesAmount" Margin="42.5,0,0,0" Text="5" Width="47" HorizontalContentAlignment="Right" TextChanged="ThreadsAmount_TextChanged" LostFocus="ThreadsAmount_LostFocus"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="24" Margin="0,56,0,0" VerticalAlignment="Top">
-                    <Label Content="Start page:" Height="26"/>
-                    <TextBox x:Name="StartPage" Margin="16,0,0,0" Text="5" Width="47" HorizontalContentAlignment="Right" TextChanged="TimeoutAmount_TextChanged" LostFocus="TimeoutAmount_LostFocus"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="24" Margin="0,27,0,0" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" Height="24" Margin="0,30,0,0" VerticalAlignment="Top">
                     <Label Content="Extension:"/>
-                    <TextBox x:Name="ExtensionBox" Margin="19.9,0,0,0" Text="txt,rar" Width="47" HorizontalContentAlignment="Right" TextChanged="TimeoutAmount_TextChanged" LostFocus="TimeoutAmount_LostFocus"/>
+                    <TextBox x:Name="ExtensionBox" Margin="19.9,0,0,0" Text=".txt;.rar" Width="47" HorizontalContentAlignment="Right" TextChanged="TimeoutAmount_TextChanged" LostFocus="TimeoutAmount_LostFocus"/>
+                </StackPanel>
+                <ComboBox x:Name="CountryCombo" HorizontalAlignment="Center" Margin="0,120,0,0" VerticalAlignment="Top" Width="130"/>
+                <StackPanel Orientation="Horizontal" Height="24" Margin="0,90,0,0" VerticalAlignment="Top">
+                    <Label Content="Size (mb):" Height="26"/>
+                    <TextBox x:Name="MaxSizeAmount" Margin="21,0,0,0" Text="50" Width="47" HorizontalContentAlignment="Right" TextChanged="ThreadsAmount_TextChanged" LostFocus="ThreadsAmount_LostFocus"/>
                 </StackPanel>
             </Grid>
-            <Grid  Grid.Row="3" HorizontalAlignment="Center" Height="119" VerticalAlignment="Center" Width="130">
+            <Grid  Grid.Row="3" HorizontalAlignment="Left" Height="136" VerticalAlignment="Center" Width="130" Margin="8,0,0,0">
                 <Border BorderThickness="1" Margin="0,0,0,25">
                     <Grid Margin="0,0,0,0">
                         <Label Content="Proxy:" HorizontalAlignment="Left" Margin="4,0,0,0" VerticalAlignment="Top" Width="81" />
@@ -72,14 +73,31 @@
                         <Label x:Name="FilterCount" Content="0" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,40,0,0" VerticalAlignment="Top" />
                         <Label Content="Files:" HorizontalAlignment="Left" Margin="4,60,0,0" VerticalAlignment="Top" />
                         <Label x:Name="FilesCount" Content="0" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,60,0,0" VerticalAlignment="Top" />
+                        <Label Content="Errors:" HorizontalAlignment="Left" Margin="4,80,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="ErrorsCount" Content="0" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,80,0,0" VerticalAlignment="Top" />
                     </Grid>
 
                 </Border>
                 <Grid Height="20" VerticalAlignment="Bottom">
                     <ProgressBar x:Name="ProgressBlock"  HorizontalAlignment="Center" Height="20" Minimum="0" Maximum="100" Value="0" VerticalAlignment="Bottom" Width="130"/>
-                    <TextBlock x:Name="ProgressCount" HorizontalAlignment="Center" Text="" TextAlignment="Center" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                    <TextBlock x:Name="ProgressCount" HorizontalAlignment="Center" Text="" TextAlignment="Center" TextWrapping="Wrap" Margin="0,2,0,0" Width="110"/>
                 </Grid>
             </Grid>
+            <Grid Grid.ColumnSpan="2" Margin="0,0,314,0"/>
+            <DataGrid x:Name="FileInfoGrid" Grid.Column="1" Margin="10,10,10,10" HorizontalScrollBarVisibility="Disabled" Grid.Row="1" Grid.RowSpan="3" CanUserReorderColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn x:Name="FileNameProp" Header="File Name" Binding="{Binding Name}" Width="80" MinWidth="80" MaxWidth="120"/>
+                    <DataGridTemplateColumn Header="Url" Width="65" CanUserResize="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock HorizontalAlignment="Center"><Hyperlink NavigateUri="{Binding Url}" RequestNavigate="Hyperlink_RequestNavigate">File Url</Hyperlink></TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn x:Name="SizeProp" Header="Size" Binding="{Binding SizeReadable}" Width="65" CanUserResize="False" ElementStyle="{StaticResource CentralAlign}"/>
+                    <DataGridTextColumn x:Name="StatusProp" Header="Status" Binding="{Binding Status}" CanUserResize="False" Width="114" ElementStyle="{StaticResource CentralAlign}"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
     </Border>
 </Window>

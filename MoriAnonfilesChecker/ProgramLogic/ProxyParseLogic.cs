@@ -74,6 +74,52 @@ namespace MoriAnonfilesChecker.ProgramLogic
             StartParse();
         }
 
+        public static int ChooseProxyParse(bool urls, bool files)
+        {
+            if (urls && files) // Urls and Files
+            {
+                return 1;
+            }
+            if (urls) // Only Urls
+            {
+                return 2;
+            }
+            if (files) // Only Files
+            {
+                return 3;
+            }
+            return 0; // No one
+        }
+
+        public static CheckMode GetCheckMode(int Mode)
+        {
+            return Mode switch
+            {
+                0 => CheckMode.Imap,
+                1 => CheckMode.Web,
+                2 => CheckMode.TCP,
+                _ => CheckMode.TCP,
+            };
+        }
+
+        public static ProxyType GetProxyType(int proxyType)
+        {
+            return proxyType switch
+            {
+                0 => ProxyType.HTTPs,
+                1 => ProxyType.Socks4,
+                2 => ProxyType.Socks5,
+                _ => ProxyType.Socks4,
+            };
+        }
+
+        public static string[] SplitUrls(string Urls)
+        {
+            string[] result = Urls.Split('\n').ToList().Where((x) => !(string.IsNullOrEmpty(x) || x == " ")).ToArray();
+            if (result.Length == 0) throw new System.Net.WebException();
+            return result;
+        }
+
         void StartParse()
         {
             proxies = new List<Proxy>();
