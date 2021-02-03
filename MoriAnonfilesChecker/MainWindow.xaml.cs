@@ -1,5 +1,6 @@
 ﻿using MoriAnonfilesChecker.Object_Class;
 using MoriAnonfilesChecker.ProgramLogic;
+using MoriImapProxy.Res;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using static MoriAnonfilesChecker.GetLogic;
 using static MoriAnonfilesChecker.ProgramLogic.ProxyParseLogic;
+using static MoriAnonfilesChecker.ProgramLogic.SettingsLogic;
 
 namespace MoriAnonfilesChecker
 {
@@ -22,21 +24,13 @@ namespace MoriAnonfilesChecker
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string CurrentPath = null;
-        public List<Proxy> proxies;
-        public ObservableCollection<MoriFile> Collection { get; set; }
-        public List<MoriFile> Collection2 { get; set; }
-
-        MoriFile test;
+        public ObservableCollection<MoriFile> Collection = new ObservableCollection<MoriFile>();
         public MainWindow()
         {
-            CurrentPath = Directory.GetCurrentDirectory();
-            Collection = new ObservableCollection<MoriFile>();
             InitializeComponent();
+            this.Title = $"MoriAnonfiles v{SettingsLogic.CurrentVersion} | Coded by MoriDan";
             SetComboValues();
-            test = new MoriFile() { DownloadURL = "https://cdn-117.anonfiles.com/g4q6If07n2/1c5af2e2-1612216348/Good.txt", Url = "https://123.com", Extension = ".exe", SizeReadable = "1", Status = "Pending", Name = "test", Size = 1000, DownloadRetry = 0, Uid = "1" };
             FileInfoGrid.ItemsSource = Collection;
-            Debug.WriteLine("Start");
         }
 
         void SetComboValues()
@@ -70,7 +64,7 @@ namespace MoriAnonfilesChecker
         {
             Process process = new Process();
             process.StartInfo.UseShellExecute = true;
-            process.StartInfo.FileName = CurrentPath;
+            process.StartInfo.FileName = SettingsLogic.CurrentPath;
             process.Start();
             process.Close();
         }
@@ -83,13 +77,6 @@ namespace MoriAnonfilesChecker
                 FileInfoGrid.Items.Refresh();
                 DownloadLogic.AddQueue(moriFile);
             }));
-
-        }
-
-        public void TakeProxies(List<Proxy> proxieslist)
-        {
-            this.proxies = proxieslist;
-            this.ProxyCount.Content = proxies.Count;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -103,19 +90,30 @@ namespace MoriAnonfilesChecker
         }
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            MainLogic.Pages = Convert.ToInt32(PagesAmount.Text);
+            if (Check()) return;
+            SettingsLogic.Reload();
             this.StopButton.IsEnabled = true;
             this.StartButton.IsEnabled = false;
             this.LoadProxyButton.IsEnabled = false;
-            this.ProgressCount.Text = $"Working [{this.ProgressBlock.Value}/{MainLogic.Pages}]";
-            this.ProgressBlock.Maximum = MainLogic.Pages;
-            MainLogic.Request = SearchWord.Text.Replace(" ", "%20");
+            this.SearchWord.IsReadOnly = true;
+            this.ExtensionBox.IsReadOnly = true;
+            this.CountryCombo.IsReadOnly = true;
+            this.DeepAmount.IsReadOnly = true;
+            this.MaxSizeAmount.IsReadOnly = true;
             GetLogic.country = GetCountry();
-            MainLogic.Extension = ExtensionBox.Text.Split(';');
             MainLogic.mainWindow = this;
-            MainLogic.MaxSize = Convert.ToInt32(MaxSizeAmount.Text) * 1000000;
             DownloadLogic.mainWindow = this;
             MainLogic.StartTesting();
+        }
+
+        private bool Check()
+        {
+            if(SettingsLogic.ProxyCount == 0)
+            {
+                MoriDanMessageBox.Show("Oops, something happened :(", "Proxy list cannot be empty..", MessageBoxButton.OK);
+                return true;
+            }
+            return false;
         }
 
         string GetCountry()
@@ -128,26 +126,16 @@ namespace MoriAnonfilesChecker
             return null;
         }
 
-        public void AddError()
-        {
-            Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-            {
-                this.ErrorsCount.Content = Convert.ToInt32(ErrorsCount.Content) + 1;
-            }));
-        }
-
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            MainLogic.ThreadsCount = 0;
-            MainLogic.StopParse = true;
-            DownloadLogic.ThreadsCount = 0;
+            SettingsLogic.StopWorking();
             this.StopButton.IsEnabled = false;
             this.StopButton.Content = "Stopping";
         }
 
         public void Stopped()
         {
-            if(MainLogic.AllParsed && DownloadLogic.AllDownloaded)
+            if(SettingsLogic.ParseComplete && SettingsLogic.DownloadComplete)
             {
                 Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
                 {
@@ -156,59 +144,19 @@ namespace MoriAnonfilesChecker
                     this.StartButton.IsEnabled = true;
                     this.StopButton.IsEnabled = false;
                     this.LoadProxyButton.IsEnabled = true;
+                    this.SearchWord.IsReadOnly = false;
+                    this.ExtensionBox.IsReadOnly = false;
+                    this.CountryCombo.IsReadOnly = false;
+                    this.DeepAmount.IsReadOnly = false;
+                    this.MaxSizeAmount.IsReadOnly = false;
                 }));
             }
-        }
-
-        private void ThreadsAmount_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void ThreadsAmount_LostFocus(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void TimeoutAmount_LostFocus(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void TimeoutAmount_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
         }
 
         private void LoadProxyButton_Click(object sender, RoutedEventArgs e)
         {
             new LoadProxyWindow(this) { Owner = this }.Show();
             this.IsEnabled = false;
-        }
-
-        public void AddProgress()
-        {
-            Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-            {
-                this.ProgressBlock.Value += 1;
-                this.ProgressCount.Text = $"Working [{this.ProgressBlock.Value}/{this.ProgressBlock.Maximum}]";
-            }));
-        }
-
-        public void BadProxy()
-        {
-            Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-            {
-                this.ProxyCount.Content = Convert.ToInt32(ProxyCount.Content) - 1;
-            }));
-        }
-
-        public void AddFilterCount()
-        {
-            Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-            {
-                this.FilterCount.Content = Convert.ToInt32(FilterCount.Content) + 1;
-            }));
         }
 
         public void ChangeStatus(string uid, string Status)
@@ -230,18 +178,16 @@ namespace MoriAnonfilesChecker
             }));
         }
 
-        public void AddLinksCount()
-        {
-            Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-            {
-                this.LinksCount.Content = Convert.ToInt32(LinksCount.Content) + 1;
-            }));
-        }
-
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             e.Handled = true;
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            new SettingsWindow(this) { Owner = this }.Show();
+            this.IsEnabled = false;
         }
     }
 }

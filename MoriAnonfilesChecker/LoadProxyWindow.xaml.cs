@@ -2,10 +2,12 @@
 using MoriAnonfilesChecker.ProgramLogic;
 using MoriImapProxy.Res;
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static MoriAnonfilesChecker.ProgramLogic.ProxyParseLogic;
 
 namespace MoriAnonfilesChecker
 {
@@ -158,7 +160,7 @@ namespace MoriAnonfilesChecker
         private void LoadWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (proxyParse != null)
-                mainwindow.TakeProxies(proxyParse.GetProxies());
+               SettingsLogic.Proxies = proxyParse.GetProxies();
             mainwindow.IsEnabled = true;
             SaveSettings();
         }

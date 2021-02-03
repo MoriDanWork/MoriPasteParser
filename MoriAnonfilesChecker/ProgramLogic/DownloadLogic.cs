@@ -8,16 +8,14 @@ namespace MoriAnonfilesChecker.ProgramLogic
     {
         static BlockingCollection<MoriDownload> queue = new BlockingCollection<MoriDownload>(new ConcurrentQueue<MoriDownload>());
         public static int CurrentThreads = 0;
-        public static int ThreadsCount = 3;
         public static MainWindow mainWindow;
-        public static bool AllDownloaded = true;
         public static void Core()
         {
-            if (ThreadsCount != 0)
+            if (SettingsLogic.StopWork) return;
                 if (queue.Count != 0)
                 {
-                    AllDownloaded = false;
-                    if (CurrentThreads < ThreadsCount)
+                    SettingsLogic.DownloadComplete = false;
+                    if (CurrentThreads < SettingsLogic.DownloadThreadsCount)
                     {
                         Interlocked.Increment(ref CurrentThreads);
                         Thread SubThread = new Thread(() =>
@@ -37,14 +35,14 @@ namespace MoriAnonfilesChecker.ProgramLogic
                 goto Flex;
             }
 
-            if (CurrentThreads == 0 && ThreadsCount == 0)
+            if (CurrentThreads == 0 && SettingsLogic.StopWork)
             {
                 goto Flex;
             }
             return;
 
         Flex:
-            AllDownloaded = true;
+            SettingsLogic.DownloadComplete = true;
             mainWindow.Stopped();
         }
 

@@ -58,6 +58,14 @@
         </Setter>
     </Style>
 
+    
+    <!--ToolTip-->
+    <Style TargetType="{x:Type ToolTip}">
+        <Setter Property="Background" Value="#1F374F"/>
+        <Setter Property="Foreground" Value="#D5D6D9"/>
+        <Setter Property="BorderBrush" Value="#1F374F"/>
+    </Style>
+
 
     <!--ScrollBar-->
     <Style x:Key="ScrollBarLineButtonStyle" TargetType="{x:Type RepeatButton}">

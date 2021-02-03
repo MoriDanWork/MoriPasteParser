@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:s="clr-namespace:MoriAnonfilesChecker.ProgramLogic"
         xmlns:local="clr-namespace:MoriAnonfilesChecker"
         mc:Ignorable="d"
-        Height="446" Width="497" Style="{StaticResource MoriWindow}" Title="MoriAnonfilesChecker v1.0 | Coded by MoriDan">
+        Height="446" Width="547" Style="{StaticResource MoriWindow}" Title="MoriAnonfilesChecker v{ver} | Coded by MoriDan">
     <Border BorderBrush="#40709F" Background="#00000000" CornerRadius="2" BorderThickness="1">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -32,7 +33,7 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="{Binding ElementName=MoriProgramWindow, Path=Title}" Grid.Column="0" VerticalContentAlignment="Center" FontFamily="Helvetica" Grid.ColumnSpan="2" Margin="0,0,199,0"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="SettingsButton" Width="30" Content="⚙" Style="{DynamicResource MenuBtn}"/>
+                        <Button x:Name="SettingsButton" Width="30" Content="⚙" Style="{DynamicResource MenuBtn}" Click="SettingsButton_Click"/>
                         <Button x:Name="FolderButton" Width="30" Content="📁" Style="{DynamicResource MenuBtn}" Click="FolderButton_Click"/>
                         <Button x:Name="CollapseButton" Width="30" Content="_____" Style="{DynamicResource MenuBtn}" Click="CollapseButton_Click"/>
                         <Button x:Name="CloseButton" Content="Flex" Style="{DynamicResource CloseBtn}" Width="30" Click="CloseButton_Click"/>
@@ -46,47 +47,71 @@
                 <Button x:Name="StopButton" Content="Stop" HorizontalAlignment="Center" Width="130" IsEnabled="False" Height="22" VerticalAlignment="Center" Click="StopButton_Click"/>
             </Grid>
             <Grid x:Name="PropertiesGrid" Height="143" VerticalAlignment="Center" Width="130" HorizontalAlignment="Left" Grid.Row="2" Margin="8,0,0,0">
-                <TextBox x:Name="SearchWord" Text="Good" HorizontalAlignment="Center" VerticalAlignment="Top" Width="130" Height="22"/>
+                <TextBox x:Name="SearchWord" Text="{Binding Path=(s:SettingsLogic.SearchWord)}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="130" Height="22"/>
                 <StackPanel Orientation="Horizontal" Height="24" Margin="0,60,0,0" VerticalAlignment="Top">
                     <Label Content="Deep:" Height="26"/>
-                    <TextBox x:Name="PagesAmount" Margin="42.5,0,0,0" Text="5" Width="47" HorizontalContentAlignment="Right" TextChanged="ThreadsAmount_TextChanged" LostFocus="ThreadsAmount_LostFocus"/>
+                    <TextBox x:Name="DeepAmount" Margin="42.5,0,0,0" Text="{Binding Path=(s:SettingsLogic.DeepReadably)}" Width="47" HorizontalContentAlignment="Right"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Height="24" Margin="0,30,0,0" VerticalAlignment="Top">
                     <Label Content="Extension:"/>
-                    <TextBox x:Name="ExtensionBox" Margin="19.9,0,0,0" Text=".txt;.rar" Width="47" HorizontalContentAlignment="Right" TextChanged="TimeoutAmount_TextChanged" LostFocus="TimeoutAmount_LostFocus"/>
+                    <TextBox x:Name="ExtensionBox" Margin="19.9,0,0,0" Text="{Binding Path=(s:SettingsLogic.ExtenstionReadable)}" Width="47" HorizontalContentAlignment="Right"/>
                 </StackPanel>
                 <ComboBox x:Name="CountryCombo" HorizontalAlignment="Center" Margin="0,120,0,0" VerticalAlignment="Top" Width="130"/>
                 <StackPanel Orientation="Horizontal" Height="24" Margin="0,90,0,0" VerticalAlignment="Top">
                     <Label Content="Size (mb):" Height="26"/>
-                    <TextBox x:Name="MaxSizeAmount" Margin="21,0,0,0" Text="50" Width="47" HorizontalContentAlignment="Right" TextChanged="ThreadsAmount_TextChanged" LostFocus="ThreadsAmount_LostFocus"/>
+                    <TextBox x:Name="MaxSizeAmount" Margin="21,0,0,0" Text="{Binding Path=(s:SettingsLogic.FileSizeReadably)}" Width="47" HorizontalContentAlignment="Right"/>
                 </StackPanel>
             </Grid>
             <Grid  Grid.Row="3" HorizontalAlignment="Left" Height="136" VerticalAlignment="Center" Width="130" Margin="8,0,0,0">
                 <Border BorderThickness="1" Margin="0,0,0,25">
                     <Grid Margin="0,0,0,0">
                         <Label Content="Proxy:" HorizontalAlignment="Left" Margin="4,0,0,0" VerticalAlignment="Top" Width="81" />
-                        <Label x:Name="ProxyCount" Content="0"   HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="49,0,0,0" VerticalAlignment="Top"  Width="68"/>
+                        <Label x:Name="ProxyCount" Content="{Binding Path=(s:SettingsLogic.ProxyCount)}" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="49,0,0,0" VerticalAlignment="Top"  Width="68"/>
 
                         <Label Content="Links:" HorizontalAlignment="Left" Margin="4,20,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="LinksCount" Content="0" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,20,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="LinksCount" Content="{Binding Path=(s:SettingsLogic.LinksCount)}" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,20,0,0" VerticalAlignment="Top" />
                         <Label Content="Filtered:" HorizontalAlignment="Left" Margin="4,40,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="FilterCount" Content="0" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,40,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="FilterCount" Content="{Binding Path=(s:SettingsLogic.FilterCount)}" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,40,0,0" VerticalAlignment="Top">
+                            <Label.ToolTip>
+                                <ToolTip>
+                                    <StackPanel Width="100">
+                                        <Grid>
+                                            <TextBlock Text="Extension Filter: " HorizontalAlignment="Left"/>
+                                            <TextBlock x:Name="ExtensionFilterCount" Text="{Binding Path=(s:SettingsLogic.ExtensionFilter)}" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid>
+                                            <TextBlock Text="Size Filter: " HorizontalAlignment="Left"/>
+                                            <TextBlock x:Name="SizeFilterCount" Text="{Binding Path=(s:SettingsLogic.SizeFilter)}" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid>
+                                            <TextBlock Text="Exist Filter: " HorizontalAlignment="Left"/>
+                                            <TextBlock x:Name="ExistFilterCount" Text="{Binding Path=(s:SettingsLogic.ExistFilter)}" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid>
+                                            <TextBlock Text="Bad Url: " HorizontalAlignment="Left"/>
+                                            <TextBlock x:Name="BadUrlCount" Text="{Binding Path=(s:SettingsLogic.BadUrl)}" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </ToolTip>
+                            </Label.ToolTip>
+                        </Label>
                         <Label Content="Files:" HorizontalAlignment="Left" Margin="4,60,0,0" VerticalAlignment="Top" />
                         <Label x:Name="FilesCount" Content="0" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,60,0,0" VerticalAlignment="Top" />
                         <Label Content="Errors:" HorizontalAlignment="Left" Margin="4,80,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="ErrorsCount" Content="0" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,80,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="ErrorsCount" Content="{Binding Path=(s:SettingsLogic.ErrorCount)}" HorizontalAlignment="Left"  HorizontalContentAlignment="Right" Width="63" Margin="54,80,0,0" VerticalAlignment="Top" />
                     </Grid>
 
                 </Border>
                 <Grid Height="20" VerticalAlignment="Bottom">
-                    <ProgressBar x:Name="ProgressBlock"  HorizontalAlignment="Center" Height="20" Minimum="0" Maximum="100" Value="0" VerticalAlignment="Bottom" Width="130"/>
-                    <TextBlock x:Name="ProgressCount" HorizontalAlignment="Center" Text="" TextAlignment="Center" TextWrapping="Wrap" Margin="0,2,0,0" Width="110"/>
+                    <ProgressBar x:Name="ProgressBlock"  HorizontalAlignment="Center" Height="20" Minimum="0" Maximum="{Binding Path=(s:SettingsLogic.DeepReadably)}" Value="{Binding Path=(s:SettingsLogic.ProgressCount)}" VerticalAlignment="Bottom" Width="130"/>
+                    <TextBlock x:Name="ProgressCount" HorizontalAlignment="Center" Text="{Binding Path=(s:SettingsLogic.ProgressReadably)}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,2,0,0" Width="110"/>
                 </Grid>
             </Grid>
             <Grid Grid.ColumnSpan="2" Margin="0,0,314,0"/>
             <DataGrid x:Name="FileInfoGrid" Grid.Column="1" Margin="10,10,10,10" HorizontalScrollBarVisibility="Disabled" Grid.Row="1" Grid.RowSpan="3" CanUserReorderColumns="False" CanUserAddRows="False" IsReadOnly="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn x:Name="FileNameProp" Header="File Name" Binding="{Binding Name}" Width="80" MinWidth="80" MaxWidth="120"/>
+                    <DataGridTextColumn x:Name="ExtProp" Header="Ext." Binding="{Binding Extension}" Width="50" CanUserResize="False" ElementStyle="{StaticResource CentralAlign}"/>
                     <DataGridTemplateColumn Header="Url" Width="65" CanUserResize="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

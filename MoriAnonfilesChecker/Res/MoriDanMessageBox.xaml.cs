@@ -61,7 +61,6 @@ namespace MoriImapProxy.Res
         public static MessageBoxResult Show(string caption, string message,
                                             MessageBoxButton buttons)
         {
-            Debug.WriteLine(message);
             var dialog = new MoriDanMessageBox();
             dialog.MessageContainer.Text = message;
             dialog.Title = caption;

@@ -11,72 +11,59 @@ namespace MoriAnonfilesChecker.ProgramLogic
 {
     public static class MainLogic
     {
-        public static int Pages;
-        public static string[] Extension;
-        public static string Request;
-        public static long MaxSize;
         public static MainWindow mainWindow;
         private static int CurrentThreads = 0;
-        public static int ThreadsCount = 3;
-        public static bool AllParsed = false;
-        public static bool StopParse = false;
         public static BlockingCollection<int> pagesStack;
 
         public static void StartTesting()
         {
-            var queue = new BlockingCollection<Proxy>(new ConcurrentQueue<Proxy>(mainWindow.proxies));
+            var proxyQueue = new BlockingCollection<Proxy>(new ConcurrentQueue<Proxy>(SettingsLogic.Proxies));
             pagesStack = new BlockingCollection<int>(new ConcurrentStack<int>());
 
-            while (Pages != 0)
-            {
-                pagesStack.Add(Pages);
-                --Pages;
-            }
-
+            for (int i = 1; i <= SettingsLogic.Deep; ++i) pagesStack.Add(i);
 
             Task.Run(() =>
             {
-                Proxy proxy = queue.Take();
+                Proxy proxy = proxyQueue.Take();
                 while (pagesStack.Count > 0)
                 {
+                    SettingsLogic.ParseComplete = false;
+                    if (SettingsLogic.StopWork) break;
 
-                    if (ThreadsCount == 0) break;
-
-                    if (CurrentThreads < ThreadsCount)
+                    if (CurrentThreads < SettingsLogic.ParseThreadsCount)
                     {
-                        Interlocked.Increment(ref CurrentThreads);
-
                         Thread SubThread = new Thread(() =>
                         {
+                            if (proxyQueue.Count == 0) goto Exit;
                             int pageNumber = pagesStack.Take();
-                        Flex:
+                        ProxyRepeat:
                             try
                             {
-                                var LinkList = GetLogic.GoogleParse(pageNumber, Request, proxy);
+                                var LinkList = GetLogic.GoogleParse(pageNumber, proxy);
                                 LinkList.ForEach(x =>
                                     {
-                                        mainWindow.AddLinksCount();
+                                        ++SettingsLogic.LinksCount;
                                         MoriFile file = GetLogic.WorkWithUrls(x);
                                         SimpleGood(file);
                                     });
                             }
                             catch (RankException)
                             {
-                                mainWindow.BadProxy();
-                                mainWindow.AddError();
-                                proxy = queue.Take();
-                                if(!StopParse) goto Flex;
+                                SettingsLogic.RemoveProxy(proxy);
+                                ++SettingsLogic.ErrorCount;
+                                proxy = proxyQueue.Take();
+                                if (!SettingsLogic.StopWork) goto ProxyRepeat; else goto Exit;
                             }
-                            mainWindow.AddProgress();
+                            ++SettingsLogic.ProgressCount;
+                        Exit:
                             Interlocked.Decrement(ref CurrentThreads);
                             Check();
                         })
                         { IsBackground = true, Priority = ThreadPriority.BelowNormal };
+                        Interlocked.Increment(ref CurrentThreads);
                         SubThread.Start();
                     }
                 }
-
-
             });
         }
 
@@ -87,14 +74,14 @@ namespace MoriAnonfilesChecker.ProgramLogic
                 goto Flex;
             }
 
-            if (CurrentThreads == 0 && ThreadsCount == 0)
+            if (CurrentThreads == 0 && SettingsLogic.StopWork)
             {
                 goto Flex;
             }
             return;
 
         Flex:
-            AllParsed = true;
+            SettingsLogic.ParseComplete = true;
             mainWindow.Stopped();
         }
 
@@ -115,19 +102,49 @@ namespace MoriAnonfilesChecker.ProgramLogic
         public static void SimpleGood(MoriFile file)
         {
             if (file.Name != null)
-                if (Extension.ToList().Contains(file.Extension))
+            {
+                if (SettingsLogic.Extenstion.ToList().Contains(file.Extension))
+                {
                     if (CheckSize(file))
-                    //if (ExistLogic.Check(file.Uid))
                     {
-                        mainWindow.AddCollection(file);
-                        mainWindow.FileCount();
-                        return;
+                        if (SettingsLogic.ExistCheck)
+                        {
+                            if (ExistLogic.Check(file.Uid))
+                            {
+                                mainWindow.AddCollection(file);
+                                mainWindow.FileCount();
+                                return;
+                            }
+                            else
+                            {
+                                ++SettingsLogic.ExistFilter;
+                            }
+                        }
+                        else
+                        {
+                            mainWindow.AddCollection(file);
+                            mainWindow.FileCount();
+                            return;
+                        }
                     }
-            mainWindow.AddFilterCount();
+                    else
+                    {
+                        ++SettingsLogic.SizeFilter;
+                    }
+                }
+                else
+                {
+                    ++SettingsLogic.ExtensionFilter;
+                }
+            }
+            else
+            {
+                ++SettingsLogic.BadUrl;
+            }
         }
         private static bool CheckSize(MoriFile file)
         {
-            if (file.Size < MaxSize)
+            if (file.Size <= SettingsLogic.FileSize)
                 return true;
             return false;
         }

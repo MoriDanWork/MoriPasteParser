@@ -61,13 +61,13 @@ namespace MoriAnonfilesChecker
 
         public static string country;
 
-        public static List<string> GoogleParse(int page, string Request, Proxy proxy)
+        public static List<string> GoogleParse(int page, Proxy proxy)
         {
             page = page * 10;
 
             try
             {
-                string url = $"https://api.qwant.com/api/search/web?count=10&offset={page}&q=site%3Aanonfiles.com%20{Request}&t=web&r={country}&device=smartphone&extensionDisabled=true&safesearch=1&locale=en_US&uiv=4";
+                string url = $"https://api.qwant.com/api/search/web?count=10&offset={page}&q=site%3Aanonfiles.com%20{SettingsLogic.SearchWord}&t=web&r={country}&device=smartphone&extensionDisabled=true&safesearch=1&locale=en_US&uiv=4";
                 string jsonResponse = GetHtml(url, proxy);
                 Debug.WriteLine(jsonResponse);
                 return GetUrls(jsonResponse).Distinct().ToList();
@@ -130,7 +130,6 @@ namespace MoriAnonfilesChecker
                 var doc = web.Load("https://anonfiles.com/" + uid);
                 var UrlNode = doc.DocumentNode.SelectNodes("//*[@id=\"download-url\"]");
                 file.DownloadURL = UrlNode[0].Attributes["href"].Value;
-                file.DownloadURL = file.DownloadURL;
 
                 return file;
             }
@@ -146,8 +145,9 @@ namespace MoriAnonfilesChecker
             string url = $"https://api.anonfiles.com/v2/file/{uid}/info";
             var json = new WebClient().DownloadString(url);
             dynamic DynamicData = JsonConvert.DeserializeObject(json);
-            file.Name = DynamicData.data.file.metadata.name.ToString().Replace('_', '.');
-            file.Extension = Path.GetExtension(file.Name);
+            string Name = DynamicData.data.file.metadata.name.ToString().Replace('_', '.');
+            file.Name = Path.GetFileNameWithoutExtension(Name);
+            file.Extension = Path.GetExtension(Name);
             file.Size = (long)DynamicData.data.file.metadata.size.bytes;
             file.DownloadRetry = 0;
             file.SizeReadable = DynamicData.data.file.metadata.size.readable;

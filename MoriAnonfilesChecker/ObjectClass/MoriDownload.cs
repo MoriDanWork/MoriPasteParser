@@ -1,4 +1,5 @@
-﻿using MoriAnonfilesChecker.Object_Class;
+﻿using HtmlAgilityPack;
+using MoriAnonfilesChecker.Object_Class;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,7 +22,7 @@ namespace MoriAnonfilesChecker.ProgramLogic
         {
             this.file = file;
             this.mainWindow = mainWindow;
-            FileName = @"Files\[" + DateTime.Now.ToString("dd-MM HH.mm.ss.f") + "] " + file.Name;
+            FileName = SettingsLogic.LoadPath + @"\[" + DateTime.Now.ToString("dd-MM HH.mm.ss.f") + "] " + file.Name + file.Extension;
         }
 
         public void Download()
@@ -60,16 +61,18 @@ namespace MoriAnonfilesChecker.ProgramLogic
             }
             else
             {
+                Debug.WriteLine(e.Error);
                 Retry();
             }
         }
 
         private void Retry()
         {
-            if (file.DownloadRetry < TryCount)
+            if (file.DownloadRetry < SettingsLogic.DownloadAttemps)
             {
                 file.DownloadRetry += 1;
                 mainWindow.ChangeStatus(file.Uid, $"Attempt[{file.DownloadRetry}/{TryCount}]..");
+                UrlReworker();
                 Download();
             }
             else
@@ -79,6 +82,14 @@ namespace MoriAnonfilesChecker.ProgramLogic
                 DownloadLogic.Check();
                 DownloadLogic.Core();
             }
+        }
+
+        private void UrlReworker()
+        {
+            var web = new HtmlWeb();
+            var doc = web.Load("https://anonfiles.com/" + file.Uid);
+            var UrlNode = doc.DocumentNode.SelectNodes("//*[@id=\"download-url\"]");
+            file.DownloadURL = UrlNode[0].Attributes["href"].Value;
         }
     }
 }
