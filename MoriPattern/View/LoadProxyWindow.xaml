@@ -1,0 +1,70 @@
+﻿<Window x:Name="LoadWindow" x:Class="MoriPattern.LoadProxyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d"
+        Height="405" Width="473" WindowStyle="None" ResizeMode="NoResize" Style="{StaticResource MoriWindow}" WindowStartupLocation="Manual" Closing="LoadWindow_Closing" Title="Load Proxy">
+	<Border BorderBrush="#40709F" Background="#00000000" CornerRadius="2" BorderThickness="1">
+		<Grid x:Name="LoadProxyGrid">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="31"/>
+				<RowDefinition Height="54"/>
+				<RowDefinition Height="152*"/>
+				<RowDefinition Height="139*"/> 
+				<RowDefinition Height="37"/>
+			</Grid.RowDefinitions>
+			<Border x:Name="TitleBorder" BorderThickness="0,0,0,1" Height="30" VerticalAlignment="Center" MouseDown="TitleGrid_MouseDown">
+				<Border.BorderBrush>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+						<GradientStop Color="#40709F" Offset="0.0" />
+						<GradientStop Color="#0D1520" Offset="1" />
+					</LinearGradientBrush>
+				</Border.BorderBrush>
+				<Grid Background="#0D1520">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition></ColumnDefinition>
+						<ColumnDefinition></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<Label Grid.Column="0" VerticalContentAlignment="Center" FontFamily="Helvetica">
+						<Label.Content>
+							<DockPanel>
+								<fa:FontAwesome Icon="UserSecret" FontSize="12" Margin="0,1,0,0" DockPanel.Dock="Left"/>
+								<TextBlock Margin="3,0,0,0">Load Proxy</TextBlock>
+							</DockPanel>
+						</Label.Content>
+					</Label>
+					<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+						<Button x:Name="CloseButton" Style="{DynamicResource CloseBtn}" Width="30" Click="CloseButton_Click"/>
+					</StackPanel>
+				</Grid>
+			</Border>
+			<TextBox x:Name="FilePathBox" Text="{Binding FileProxyPath, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" Width="332" Grid.Row="1" Height="22" AllowDrop="True" PreviewDragOver="FilePathBox_PreviewDragOver" Drop="FilePathBox_Drop" Binding.SourceUpdated="FilePathBox_SourceUpdated"/>
+
+			<Button x:Name="OpenFileButton" Content="Open File" Margin="347,30,10,0" VerticalAlignment="Top" Height="22" Grid.Row="1" Click="OpenFileButton_Click"/>
+			<TextBox x:Name="FileUrlPathBox" Text="{Binding FileUrlsPath, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" Width="332" Grid.Row="2" Height="22" AllowDrop="True" PreviewDragOver="UrlFilePathBox_PreviewDragOver" Drop="UrlFilePathBox_Drop" Binding.SourceUpdated="UrlsPathBox_SourceUpdated"/>
+			<TextBox x:Name="UrlsPathBox" Text="{Binding Urls, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}"  VerticalContentAlignment="Top" AcceptsReturn="True" HorizontalAlignment="Center" TextWrapping="NoWrap" VerticalAlignment="Top" Width="451" Grid.Row="2" Height="86" ScrollViewer.HorizontalScrollBarVisibility="Auto" Binding.SourceUpdated="UrlsPathBox_SourceUpdated"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" PreviewDragOver="UrlsPathBox_PreviewDragOver" PreviewDrop="UrlsPathBox_PreviewDrop" Margin="0,57,0,0"/>
+			<Button x:Name="LoadButton" Content="Load" Margin="351,0,10,0" Grid.Row="4" VerticalAlignment="Center" Height="22" Click="LoadButton_Click"/>
+			<CheckBox x:Name="StartAfterLoadCheckBox" Content="Start after loading" HorizontalAlignment="Left" Margin="133,0,0,0" VerticalAlignment="Center" Width="112" Height="16" Grid.Row="4"/>
+			<ComboBox x:Name="ProxyTypeBox" HorizontalAlignment="Left" Margin="252,0,0,0" Grid.Row="4" VerticalAlignment="Center" Width="90" Height="22" ItemsSource="{Binding ProxyTypeValues}" SelectedItem="{Binding ProxyType, Mode=TwoWay}">
+			</ComboBox>
+			<CheckBox x:Name="ProxyFileCheckBox" Content="Get Proxy From File:" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="15" Width="131"/>
+			<CheckBox x:Name="ProxyURLsCheckBox" Content="Get Proxy From URL`s:" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Height="15" Width="147"/>
+			<TextBox x:Name="ProxyFromClipBoardBox" VerticalContentAlignment="Top" AcceptsReturn="True" HorizontalAlignment="Center" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="451" Grid.Row="3" Height="86" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" PreviewDragOver="UrlsPathBox_PreviewDragOver" PreviewDrop="UrlsPathBox_PreviewDrop" TextChanged="ProxyFromClipBoardBox_TextChanged"  Margin="0,31,0,0"/>
+			<CheckBox x:Name="ProxyFromClipBoardCheckBox" Content="Get Proxy From Clipboard:" HorizontalAlignment="Left" Margin="10,7,0,0" Grid.Row="3" VerticalAlignment="Top" Height="15" Width="159"/>
+			<Button x:Name="OpenUrlsFileButton" Content="Open File" Margin="347,30,10,0" VerticalAlignment="Top" Height="22" Grid.Row="2" Click="OpenUrlsFileButton_Click" />
+			<Button x:Name="ClearClipboardButton" Margin="439,4,10,0" VerticalAlignment="Top" Height="22" Width="22" Grid.Row="3" Click="ClearClipboardButton_Click" >
+				<Button.Content>
+					<fa:FontAwesome Icon="Times" FontSize="14" DockPanel.Dock="Left"/>
+				</Button.Content>
+			</Button>
+			<Button x:Name="LoadFromClipboardButton" Margin="412,4,37,0" VerticalAlignment="Top" Height="22" Width="22" Grid.Row="3" Click="LoadFromClipboardButton_Click">
+				<Button.Content>
+					<fa:FontAwesome Icon="Clipboard" FontSize="12" DockPanel.Dock="Left"/>
+				</Button.Content>
+			</Button>
+
+		</Grid>
+	</Border>
+</Window>

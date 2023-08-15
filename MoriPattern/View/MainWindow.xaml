@@ -1,0 +1,159 @@
+﻿<Window x:Name="MoriProgramWindow" x:Class="MoriPattern.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MoriPattern"
+		xmlns:fa="http://schemas.fontawesome.io/icons/"
+		xmlns:converters="clr-namespace:MoriPattern.Res"
+        mc:Ignorable="d"
+        Height="375" Width="547" Style="{StaticResource MoriWindow}" Title="" Closing="MoriProgramWindow_Closing">
+	<Window.Resources>
+		<converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+		<converters:BoolToHiddenConverter x:Key="BoolToHiddenConverter"/>
+		<converters:BoolInverterConverter x:Key="BoolInverterConverter"/>
+	</Window.Resources>
+	<Border BorderBrush="#40709F" Background="#00000000" CornerRadius="2" BorderThickness="1" Margin="0">
+		<Grid Margin="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="150"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="31"/>
+				<RowDefinition Height="104"/>
+				<RowDefinition Height="97"/>
+				<RowDefinition Height="124*"/>
+			</Grid.RowDefinitions>
+			<Border x:Name="TitleBorder" BorderThickness="0,0,0,1" Height="30" VerticalAlignment="Center" MouseDown="TitleGrid_MouseDown" Grid.ColumnSpan="2">
+				<Border.BorderBrush>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+						<GradientStop Color="#40709F" Offset="0.0" />
+						<GradientStop Color="#0D1520" Offset="1" />
+					</LinearGradientBrush>
+				</Border.BorderBrush>
+				<Grid Background="#0D1520">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition></ColumnDefinition>
+						<ColumnDefinition></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<Label Content="{Binding ElementName=MoriProgramWindow, Path=Title}" Grid.Column="0" VerticalContentAlignment="Center" FontFamily="Helvetica" Grid.ColumnSpan="2" Margin="0,0,199,0"/>
+					<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+						<Popup x:Name="MenuPopup" PlacementTarget="{Binding ElementName=OpenPopupMenu}" MinWidth="100px" StaysOpen="False">
+							<Border BorderBrush="#40709F"  BorderThickness="1">
+								<StackPanel>
+									<Button x:Name="FolderButton" Height="25px" Style="{DynamicResource PopupBtn}" Click="FolderButton_Click">
+										<Button.Content>
+											<DockPanel>
+												<fa:FontAwesome Icon="Folder" FontSize="12" Margin="0,2.5,0,0" DockPanel.Dock="Left"/>
+												<TextBlock Margin="5,0,0,0">Open folder</TextBlock>
+											</DockPanel>
+										</Button.Content>
+									</Button>
+									<Button x:Name="TelegramButton" Height="25px" Style="{DynamicResource PopupBtn}" Click="TelegramButton_Click">
+										<Button.Content>
+											<DockPanel>
+												<fa:FontAwesome Icon="Telegram" FontSize="12" Margin="0,2.5,0,0" DockPanel.Dock="Left"/>
+												<TextBlock Margin="5,0,0,0">Contact</TextBlock>
+											</DockPanel>
+										</Button.Content>
+									</Button>
+									<Button x:Name="SettingsButton" Height="25px" Style="{DynamicResource PopupBtn}" Click="SettingsButton_Click">
+										<Button.Content>
+											<DockPanel>
+												<fa:FontAwesome Icon="Cog" FontSize="12" Margin="0,2.5,0,0" DockPanel.Dock="Left"/>
+												<TextBlock Margin="5,0,0,0">Settings</TextBlock>
+											</DockPanel>
+										</Button.Content>
+									</Button>
+								</StackPanel>
+							</Border>
+						</Popup>
+						<Button x:Name="OpenPopupMenu" Width="30" Style="{DynamicResource MenuBtn}" Click="OpenPopupMenu_Click">
+							<fa:FontAwesome Icon="Bars" FontSize="14"></fa:FontAwesome>
+						</Button>
+						<Button x:Name="CollapseButton" Width="30" Style="{DynamicResource MenuBtn}" Click="CollapseButton_Click">
+							<fa:FontAwesome Icon="WindowMinimize"></fa:FontAwesome>
+						</Button>
+						<Button x:Name="CloseButton" Style="{DynamicResource CloseBtn}" Width="30" Click="CloseButton_Click"/>
+					</StackPanel>
+				</Grid>
+			</Border>
+
+			<Grid x:Name="ControlGrid" HorizontalAlignment="Center" VerticalAlignment="Center" Width="130" Grid.Row="1">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="25"/>
+					<RowDefinition Height="3"/>
+					<RowDefinition Height="25"/>
+					<RowDefinition Height="3"/>
+					<RowDefinition Height="25"/>
+				</Grid.RowDefinitions>
+				<Button x:Name="buttonLoadSource" Grid.Row="0" Height="25" Content="Load Source" HorizontalAlignment="Center" Width="130" VerticalAlignment="Top" Click="ButtonLoadSource_Click"/>
+				<Button x:Name="buttonLoadProxy" Grid.Row="2" Height="25" Content="Load Proxy" HorizontalAlignment="Center" Width="130" VerticalAlignment="Top" Click="LoadProxyButton_Click"/>
+				<Button x:Name="StartButton" Grid.Row="4" Content="Start" Height="25" HorizontalAlignment="Left" Width="130" VerticalAlignment="Center" Click="StartButton_Click" Visibility="{Binding IsWork, Converter={StaticResource BoolToHiddenConverter}}"/>
+				<Button x:Name="StopButton" Grid.Row="4" Content="Stop" Height="25" Width="130" IsEnabled="{Binding StopWork, Converter={StaticResource BoolInverterConverter}}"  Visibility="{Binding IsWork, Converter={StaticResource BoolToVisibilityConverter}}" HorizontalAlignment="Left" VerticalAlignment="Center" Click="StopButton_Click" />
+			</Grid>
+			<Grid x:Name="PropertiesGrid" Height="auto" VerticalAlignment="Top" Width="130"  HorizontalAlignment="Center" Grid.Row="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="25"/>
+					<RowDefinition Height="3"/>
+					<RowDefinition Height="25"/>
+					<RowDefinition Height="3"/>
+					<RowDefinition Height="25"/>
+				</Grid.RowDefinitions>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Height="24" VerticalAlignment="Center" Margin="5,0,0,0">
+					<CheckBox x:Name="checkBoxUseProxy" IsChecked="{Binding UseProxy, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" Content="Use proxy" Height="16"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal" Grid.Row="2"  Height="24" VerticalAlignment="Top">
+					<Label Content="Threads:"/>
+					<TextBox x:Name="textBoxThreads"  Margin="28.5,0,0,0" Text="{Binding ThreadsCount, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" Width="47" HorizontalContentAlignment="Right" PreviewTextInput="TextBoxThreads_PreviewTextInput" Binding.SourceUpdated="TextBoxThreads_SourceUpdated" />
+				</StackPanel>
+				<StackPanel Orientation="Horizontal" Grid.Row="4" Height="24" VerticalAlignment="Bottom">
+					<Label Content="Timeout:"/>
+					<TextBox x:Name="textBoxTimeout" Margin="26.5,0,0,0" Text="{Binding Timeout, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" Width="47" HorizontalContentAlignment="Right" PreviewTextInput="TextBoxTimeout_PreviewTextInput" Binding.SourceUpdated="TextBoxTimeout_SourceUpdated"/>
+				</StackPanel>
+			</Grid>
+			<Grid  Grid.Row="3" HorizontalAlignment="Center" Height="auto" VerticalAlignment="Top" Width="130">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="5px"/>
+					<RowDefinition Height="25px"/>
+				</Grid.RowDefinitions>
+				<Border BorderThickness="1" Grid.Row="0">
+					<Grid Margin="0,0,0,0" >
+						<Grid.RowDefinitions>
+							<RowDefinition Height="25"/>
+							<RowDefinition Height="25"/>
+							<RowDefinition Height="25"/>
+							<RowDefinition Height="25"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" MinWidth="68"/>
+							<ColumnDefinition Width="Auto" MinWidth="60"/>
+						</Grid.ColumnDefinitions>
+						<Label Content="Source:" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" />
+						<Label x:Name="SourceCount" Grid.Row="0" Content="{Binding SourceCount}" Grid.Column="1" HorizontalAlignment="Right"  HorizontalContentAlignment="Right" VerticalAlignment="Center" Height="26" Width="auto"/>
+						<Label Content="Proxy:" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26"  />
+						<Label x:Name="ProxyCount" Grid.Row="1" Content="{Binding ProxyCount}" Grid.Column="1" HorizontalAlignment="Right"  HorizontalContentAlignment="Right" VerticalAlignment="Center" Height="26" Width="auto"/>
+						<Label Content="Errors:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="26"  />
+						<Label x:Name="ErrorsCount"  Grid.Row="2" Content="{Binding ErrorCount}" Grid.Column="1" HorizontalAlignment="Right" HorizontalContentAlignment="Right"  VerticalAlignment="Center" Height="29" Width="auto" />
+						<Label Content="Threads:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="26" />
+						<Label x:Name="labelCurrentThreads" Grid.Row="3" Content="{Binding CurrentThreadCount}" Grid.Column="1" HorizontalAlignment="Right"  HorizontalContentAlignment="Right"  VerticalAlignment="Center" Height="29" Width="auto" />
+					</Grid>
+
+				</Border>
+				<Grid Grid.Row="2">
+					<ProgressBar x:Name="ProgressBlock"  HorizontalAlignment="Center" Height="20" Minimum="0"   VerticalAlignment="Bottom" Width="130"/>
+					<TextBlock x:Name="ProgressCount" HorizontalAlignment="Center" Text="{Binding SourceProgress}" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Width="130" Margin="0,5,0,0"/>
+				</Grid>
+			</Grid>
+			<Grid Grid.ColumnSpan="2" Margin="0,0,314,0"/>
+			<DataGrid x:Name="FileInfoGrid" Grid.Column="1" Margin="10,10,10,10" HorizontalScrollBarVisibility="Disabled" Grid.Row="1" Grid.RowSpan="3" CanUserReorderColumns="False" CanUserAddRows="False" IsReadOnly="True">
+				<DataGrid.Columns>
+
+
+				</DataGrid.Columns>
+			</DataGrid>
+		</Grid>
+	</Border>
+</Window>

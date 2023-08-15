@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <ApplicationIcon>Res\MoriIcoWolf.ico</ApplicationIcon>
+    <UseWPF>true</UseWPF>
+    <NoWarn>NU1701</NoWarn>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.51" />
+    <PackageReference Include="Leaf.xNet" Version="5.2.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.1" />
+  </ItemGroup>
+
+</Project>
